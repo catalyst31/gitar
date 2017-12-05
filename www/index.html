@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html>
+    <!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+        <title>Blank App Designer Cordova Web App Project Template</title>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+        <!--
+  * The "meta viewport" tag (below) helps your app size appropriately to a device's ideal viewport.
+  * Note that Windows device viewports work better when initialized using the @viewport CSS rule.
+  * For a quick overview of "meta viewport" and @viewport, see this article:
+  *   http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag
+  * To see how it works, try your app on a real device with and without a "meta viewport" tag.
+  * Additional useful references include:
+  *   http://www.quirksmode.org/mobile/viewports.html
+  *   http://www.quirksmode.org/mobile/metaviewport/devices.html
+  *   https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
+-->
+
+        <!-- <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1"> -->
+        <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=no">
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, minimum-scale=1, maximum-scale=2"> -->
+
+        <style>
+            /* following three (cascaded) are equivalent to above three meta viewport statements */
+            /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html */
+            /* see http://dev.w3.org/csswg/css-device-adapt/ */
+                @-ms-viewport { width: 100vw ; min-zoom: 100% ; zoom: 100% ; }          @viewport { width: 100vw ; min-zoom: 100% zoom: 100% ; }
+                @-ms-viewport { user-zoom: fixed ; min-zoom: 100% ; }                   @viewport { user-zoom: fixed ; min-zoom: 100% ; }
+                /*@-ms-viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }   @viewport { user-zoom: zoom ; min-zoom: 100% ; max-zoom: 200% ; }*/
+        </style>
+
+        <link rel="stylesheet" href="css/app.css">
+        <link rel="stylesheet" type="text/css" href="css/index_main.less.css" class="main-less">
+
+        <!-- IMPORTANT: Do not include a weinre script tag as part of your release builds! -->
+        <!-- Place your remote debugging (weinre) script URL from the Test tab here, if it does not work below -->
+        <!-- <script src="http://debug-software.intel.com/target/target-script-min.js#insertabiglongfunkynumberfromthexdkstesttab"></script> -->
+
+        <!-- Recommended location for your JavaScript libraries -->
+        <!-- These library references (below) are just examples to give you the general idea... -->
+        <!-- <script src="lib/mc/hammer.js"></script> -->
+        <!-- <script src="lib/ft/fastclick.js"></script> -->
+
+        <!--
+  * cordova.js is a phantom lib for "Cordova HTML5 web app," it does nothing in a "Standard HTML5 web app"
+  * Seeing a "Failed to load resource: net::ERR_FILE_NOT_FOUND" message caused by this "cordova.js" script?
+  * The cordova.js script is required if you convert your "Standard HTML5" project into a "Cordova" project.
+  * You can safely ignore the error or comment out this line if you will not be developing a Cordova app.
+-->
+        <script src="cordova.js" id="xdkJScordova_"></script>
+
+        <script src="js/app.js"></script>
+        <!-- for your event code, see README and file comments for details -->
+        <script src="js/init-app.js"></script>
+        <!-- for your init code, see README and file comments for details -->
+        <script src="xdk/init-dev.js"></script>
+        <!-- normalizes device and document ready events, see file for details -->
+        <script type="application/javascript" src="lib/jquery.min.js"></script>
+        <script type="application/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+        <script type="application/javascript" src="marginal/marginal-position.min.js"></script>
+        <script type="application/javascript" src="js/index_user_scripts.js"></script>
+        <script type="application/javascript" src="xdk/ad/bs_subpage.js"></script>
+
+        <script type="text/javascript">
+            //app.initialize();
+
+      document.addEventListener("deviceready", onDeviceReady, false);
+
+      function onDeviceReady() {
+
+var db_mahasiswa = database();
+
+function database(){
+db_mahasiswa = window.sqlitePlugin.openDatabase({name: "database_mahasiswa.db", createFromLocation: 1});
+    db_mahasiswa.transaction(function(tx){
+        tx.executeSql("CREATE TABLE IF NOT EXISTS data_mahasiswa(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, nim INTEGER NOT NULL, nama TEXT NOT NULL DEFAULT 'nama');", [], null, null);
+    });
+    data_m();
+    return db_mahasiswa;
+}
+          
+function tambah(){
+    var nim = document.getElementById('nim').value;
+    var nama = document.getElementById('nama').value;
+    
+    db_mahasiswa.transaction(function(tx){
+        tx.executeSql("INSERT INTO data_mahasiswa('nim', 'nama') values(" + nim + ",'" + nama + "');", [], null, null);
+        data_m();
+    });
+        
+}
+          
+function data_m(){
+db_mahasiswa.transaction(function(tx) {
+
+    tx.executeSql("SELECT * FROM data_mahasiswa", null, function(tx, data) {
+        var html = "<table style='border:1px solid #CCCCCC;' align='center'><tr style='background:linear-gradient(to bottom, #FFFFFF 0%, #CCCCCC 90%);'><td style='border-right:1px solid #CCCCCC;'>ID</td><td style='border-right:1px solid #CCCCCC;'>NIM</td><td>NAMA</td></tr>";
+        for(var i=0; i < data.rows.length; i++){
+            html += "<tr><td style='border-right:1px dashed #CCCCCC;'>" + data.rows.item(i).id +
+                "</td><td style='border-right:1px dashed #CCCCCC;'>" + data.rows.item(i).nim +
+                "</td><td>" + data.rows.item(i).nama +
+                "</td></tr>";
+
+        }
+        html += "</table>";
+        document.getElementById('data').innerHTML = html;
+        document.getElementById('data2').innerHTML = data.rows.item(3).nama;
+    input.getElementById('hapus').value=data.rows.item(2).nama;
+    });
+
+});
+}
+
+function hapus(){
+    db_mahasiswa.transaction(function(tx){
+            tx.executeSql("DELETE FROM data_mahasiswa");
+        });
+        data_m();
+    }                                 
+var hps = document.getElementById('hapus');
+var tmbh = document.getElementById('tambah');
+hps.addEventListener("click", hapus, false);
+tmbh.addEventListener("click", tambah, false);
+
+  }
+        </script>
+    </head>
+
+    <body>
+        <!-- IMPORTANT: Do not include a weinre script tag as part of your release builds! -->
+        <!-- Place your remote debugging (weinre) script URL from the Test tab here, if it does not work above -->
+        <!-- <script src="http://debug-software.intel.com/target/target-script-min.js#insertabiglongfunkynumberfromthexdkstesttab"></script> -->
+        <div class="upage bg bgg" id="mainpage">
+
+            <div class="upage-outer">
+                <div class="upage-content ac0 content-area vertical-col left" id="page_46_25"></div>
+                <div class="uib-footer uib-footer-fixed footer-bg container-group inner-element uib_w_66 sz" data-uib="layout/footer" data-ver="0">
+                    <h2></h2>
+                    <div class="widget-container wrapping-col single-centered">
+                        <button class="btn widget uib_w_67 d-margins Masuk btn-lg btn-default" data-uib="twitter%20bootstrap/button" data-ver="1"> <i class="glyphicon glyphicon-play"></i>
+                        </button>
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col left"></div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="upage hidden minor-bg" id="minor">
+            <div class="upage-outer">
+                <div class="uib-header header-bg container-group inner-element uib_w_31" data-uib="layout/header" data-ver="0">
+                    <h2>CHORD MINOR</h2>
+                    <div class="widget-container wrapping-col single-centered"></div>
+                    <div class="widget-container content-area horiz-area wrapping-col left">
+                        <button class="btn widget uib_w_78 d-margins btn-default" data-uib="twitter%20bootstrap/button" data-ver="1" id="kembali_minor">Kembali</button>
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+                <div class="upage-content ac0 content-area vertical-col left" id="page_8_51">
+                    <br>
+                    <div class="panel-group no_wrap widget uib_w_22 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-7">
+                        <div class="panel widget uib_w_23 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-22" data-parent="#bs-accordion-7">Chord A Minor</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-22" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_13 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_39 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/a minor copy.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan A Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+
+                                                <p>1. Posisikan jari telunjuk yang menekan senar kedua pada fred pertama</p>
+                                                <p>2. Posisikan jari tengah yang menekan senar ketiga pada fred ketiga</p>
+                                                <p>3. Posisikan jari manis yang menekan senar keempat pada fred ketiga</p>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel widget uib_w_24 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-23" data-parent="#bs-accordion-7">Chord B Minor</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-23" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_14 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_40 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/b minor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan B Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Posisikan jari telunjuk yang menekan senar pertama pada fred kedua</p>
+                                                <p>2. Posisikan jari tengah yang menkan senar kedua pada fred ketiga</p>
+                                                <p>3. Posisikan jari manis yang menekan senar ketiga pada fred keempat</p>
+                                                <p>4. Posisikan jari kelingking yang menekan senar keempat pada fred keempat</p>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel widget uib_w_25 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-24" data-parent="#bs-accordion-7">Chord C Minor</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-24" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_15 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_41 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/c minor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan C Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Posisikan jari telunjuk yang menekan senar ke satu pada fred ketiga</p>
+                                                <p>2. Posisikan jari tengah yang menekan senar ke dua pada fred keempat</p>
+                                                <p>3. Posisikan jari manis yang menekan senar ke empat pada fred kelima</p>
+                                                <p>4. Posisikan jari kelingking yang menekan senar ke tiga pada fred kelima</p>
+
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group no_wrap widget uib_w_26 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-8">
+                        <br>
+                        <div class="panel widget uib_w_27 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                    
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-25" data-parent="#bs-accordion-8">Chord D Minor</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-25" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_16 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_42 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/d minor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan D Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Posisikan jari telunjuk di senar ke satu, fred ke 1</p>
+                                                <p>2. Posisikan jari tengah di senar ketiga, fred ke 2</p>
+                                                <p>3. Posisikan jari manis di senar kedua, fred ke 3</p>
+
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel widget uib_w_28 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-26" data-parent="#bs-accordion-8">Chord E Minor</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-26" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_17 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_43 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/e minor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan E Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Posisikan jari tengah untuk menekan senar lima di fred ke 2</p>
+                                                <p>2. Posisikan jari manis untuk menekan senar empat di fret ke 2</p>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel widget uib_w_29 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-27" data-parent="#bs-accordion-8">Chord F Minor</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-27" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_18 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_44 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/f minor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan F Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Posisikan jari telunjuk untuk menekan senar ke satu(1) sampai tiga(3), di fret pertama</p>
+                                                <p>2. Posisikan jari manis di senar ke empat, di fret ke 3</p>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uib-footer uib-footer-fixed footer-bg container-group inner-element uib_w_73" data-uib="layout/footer" data-ver="0">
+                    <h2></h2>
+                    <div class="widget-container wrapping-col single-centered">
+                        <button class="btn widget uib_w_80 d-margins btn-default" data-uib="twitter%20bootstrap/button" data-ver="1">Informasi</button>
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col left">
+
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="upage hidden major-bg" id="major">
+            <div class="upage-outer">
+                <div class="uib-header header-bg container-group inner-element uib_w_30" data-uib="layout/header" data-ver="0">
+                    <h2>CHORD MAJOR</h2>
+                    <div class="widget-container wrapping-col single-centered"></div>
+                    <div class="widget-container content-area horiz-area wrapping-col left">
+                        <button class="btn widget uib_w_77 d-margins btn-default" data-uib="twitter%20bootstrap/button" data-ver="1" id="kembali_major">Kembali</button>
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+                <div class="upage-content ac0 content-area vertical-col left" id="page_9_15">
+                    <div class="panel-group no_wrap widget uib_w_12 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-4">
+                        <br>
+                        <div class="panel widget uib_w_13 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-13" data-parent="#bs-accordion-4">Chord A Major</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-13" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_4 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_32 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/a mayor.gif">
+
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan A mayor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>
+                                                    1. Letakkan / posisikan jari tengah di senar keempat fret ke 2</p>
+                                                <p>2. Letakkan / posisikan jari manis di senar ketiga fret ke 2</p>
+                                                <p>3. Letakkan / posisikan jari kelingking di senar kedua fret ke 2</p>
+                                                <p><strong>                                   
+        # Petik satu persatu nada dari kunci A mayor di atas dan pastikan nada yang keluar terdengar dengan jelas. Pastikan posisi jari sudah tepat.</strong>
+                                                </p>
+
+                                            </div>
+                                            <button class="btn widget uib_w_70 d-margins btn-default" data-uib="twitter%20bootstrap/button" data-ver="1">Video</button>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel widget uib_w_14 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-14" data-parent="#bs-accordion-4">Chord B Major</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-14" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_5 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_33 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/b mayor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan B mayor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Gunakan jari telunjuk untuk menekan senar ke satu, fret kedua.</p>
+
+                                                <p>2. Gunakan jari tengah untuk menekan senar ke empat, fret keempat.</p>
+
+                                                <p>3. Gunakan jari manis untuk menekan senar ketiga, fret keempat.</p>
+
+                                                <p>4. Gunakan jari kelingking untuk menekan senar ke dua, fret keempat.</p>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel widget uib_w_15 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-15" data-parent="#bs-accordion-4">Chord C Major</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-15" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_6 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_34 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/c mayor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan C mayor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Letakkan jari telunjuk pada senar ke dua, fret pertama.</p>
+
+                                                <p>2. Letakkan jari tengah pada senar ke empat, fret kedua.</p>
+
+                                                <p>3. Letakkan jari manis pada senar ke lima, fret ketiga.</p>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group no_wrap widget uib_w_16 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-5">
+                        <br>
+                        <div class="panel widget uib_w_17 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-16" data-parent="#bs-accordion-5">Chord D Major</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-16" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_7 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_35 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/d mayor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan D mayor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Posisikan jari telunjuk untuk menekan senar ke tiga pada fret 2.</p>
+                                                <p>2. Posisikan jari manis menekan senar ke satu pada fret 2.</p>
+                                                <p>3. Posisikan jari tengah menekan senar ke dua pada fret 3.</p>
+
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="panel widget uib_w_18 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-17" data-parent="#bs-accordion-5">Chord E Major</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-17" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_8 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="widget-container content-area vertical-col">
+                                            <div class="widget uib_w_36 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                                <figure class="figure-align">
+                                                    <img src="images/e mayor.gif">
+                                                    <figcaption data-position="bottom"></figcaption>
+                                                </figure>
+                                                <p><strong>Cara memainkan E mayor dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Posisikan jari manis menekan senar kelima pada kolom fret kedua.</p>
+                                                <p>2. Posisikan jari kelingking menekan senar keempat pada kolom fret kedua.</p>
+                                                <p>3. Posisikan jari tengah menekan senar ketiga pada kolom fret pertama.</p>
+
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="panel widget uib_w_19 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-18" data-parent="#null">Chord F Major</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-18" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_9 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <div class="widget uib_w_37 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                            <figure class="figure-align">
+                                                <img src="images/f mayor.gif">
+                                                <figcaption data-position="bottom"></figcaption>
+                                            </figure>
+                                            <p><strong>Cara memainkan F mayor dari gambar di atas adalah sebagai berikut !</strong>
+                                            </p>
+
+                                            <p>1. Letakkan jari telunjuk di fret kolom pertama dengan menekan senar pertama dan kedua sekaligus.</p>
+                                            <p>2. Letakkan jari tengah di senar ketiga pada kolom fret ketiga</p>
+                                            <p>3. Letakkan jari manis di senar keempat pada kolom fret keempat.</p>
+                                            <p>4. Pada posisi ini, senar kelima dan keenam tidak dibunyikan.</p>
+                                            <p>Petik senar mulai dari senar keempat menuju senar pertama dan pastikan posisi jari sudah tepat sehingga suaranya terdengar jelas dan jernih.</p>
+
+                                        </div>
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel widget uib_w_21 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-19" data-parent="#null">Chord G Major</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-19" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_10 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <div class="widget uib_w_38 scale-image d-margins" data-uib="media/img" data-ver="0">
+                                            <figure class="figure-align">
+                                                <img src="images/g mayor.gif">
+                                                <figcaption data-position="bottom"></figcaption>
+                                            </figure>
+                                            <p><strong>Cara memainkan G mayor dari gambar di atas adalah sebagai berikut !</strong>
+                                            </p>
+
+                                            <p>1. Posisikan jari telunjuk di senar ke lima, fred ketiga</p>
+                                            <p>2. Posisikan jari tengah di senar ke enam, fred keempat</p>
+                                            <p>3. Posisikan jari manis di senar ke satu, fred keempat</p>
+                                        </div>
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uib-footer uib-footer-fixed footer-bg container-group inner-element uib_w_76" data-uib="layout/footer" data-ver="0">
+                    <h2></h2>
+                    <div class="widget-container wrapping-col single-centered">
+                        <button class="btn widget uib_w_81 d-margins btn-default" data-uib="twitter%20bootstrap/button" data-ver="1">Informasi</button>
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col left">
+
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="upage hidden warna_awal" id="awal">
+            <div class="upage-outer">
+                <div class="uib-header header-bg container-group inner-element uib_w_8" data-uib="layout/header" data-ver="0">
+                    <h2>CHORD GITAR</h2>
+                    <div class="widget-container wrapping-col single-centered"></div>
+                    <div class="widget-container content-area horiz-area wrapping-col left"></div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+                <div class="upage-content ac0 content-area vertical-col left" id="page_10_16">
+                    <div class="list-group widget uib_w_63 d-margins" data-uib="twitter%20bootstrap/list_group" data-ver="1">
+                        <a class="list-group-item allow-badge widget uib_w_64" data-uib="twitter%20bootstrap/list_item" data-ver="1">
+
+                            <h4 class="list-group-item-heading">Chord Major</h4>
+                            <p class="list-group-item-text">Tutorial Kunci Dasar Chord Major</p>
+                        </a>
+                        <a class="list-group-item allow-badge widget uib_w_65" data-uib="twitter%20bootstrap/list_item" data-ver="1">
+
+                            <h4 class="list-group-item-heading">Chord Minor</h4>
+                            <p class="list-group-item-text">Tutorial Kunci Dasar Chord Minor</p>
+                        </a>
+                        <a class="list-group-item allow-badge widget uib_w_84" data-uib="twitter%20bootstrap/list_item" data-ver="1">
+
+                            <h4 class="list-group-item-heading">Chord Kres</h4>
+                            <p class="list-group-item-text">Tutorial Kunci Dasar Kres</p>
+                        </a>
+                        <a class="list-group-item allow-badge widget uib_w_85" data-uib="twitter%20bootstrap/list_item" data-ver="1">
+
+                            <h4 class="list-group-item-heading">About</h4>
+                        </a>
+                        <a class="list-group-item allow-badge widget uib_w_86" data-uib="twitter%20bootstrap/list_item" data-ver="1">
+                            <h4 class="list-group-item-heading">Heading</h4>
+                            <p class="list-group-item-text">List item</p>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="upage hidden" id="video_a_major">
+            <div class="upage-outer">
+                <div class="uib-header header-bg container-group inner-element uib_w_69" data-uib="layout/header" data-ver="0">
+                    <h2>Chord A Major</h2>
+                    <div class="widget-container wrapping-col single-centered"></div>
+                    <div class="widget-container content-area horiz-area wrapping-col left">
+                        <button class="btn widget uib_w_110 d-margins btn-default" data-uib="twitter%20bootstrap/button" data-ver="1">Kembali</button>
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+                <div class="upage-content ac0 content-area vertical-col left" id="page_10_3">
+                    <div class="embed-video widget uib_w_68 d-margins" data-uib="media/youtube" data-ver="0">
+                        <iframe src="http://www.youtube.com/embed/-1SONky3kEQ?wmode=transparent">
+                        </iframe>
+                        <div id="data">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="upage hidden warna_kres" id="kres">
+            <div class="upage-outer">
+                <div class="uib-header header-bg container-group inner-element uib_w_87" data-uib="layout/header" data-ver="0">
+                    <h2></h2>
+                    <div class="widget-container wrapping-col single-centered"></div>
+                    <div class="widget-container content-area horiz-area wrapping-col left">
+                        <button class="btn widget uib_w_120 d-margins btn-default" data-uib="twitter%20bootstrap/button" data-ver="1" id="Kembali_Kres">Kembali</button>
+                    </div>
+                    <div class="widget-container content-area horiz-area wrapping-col right"></div>
+                </div>
+                <div class="upage-content ac0 content-area vertical-col left" id="page_85_73">
+                    <div class="panel-group no_wrap widget uib_w_88 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-0">
+                        <div class="panel widget uib_w_89 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-0" data-parent="#bs-accordion-0">Chord A# Kress</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-0" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_19 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="kembali_major">
+                                            <img src="images/AKress.jpg" height="100%" width="100%">
+                                        </div>
+                                        <div class="widget-container content-area vertical-col">
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <div>
+                                                <p><strong>Cara memainkan A Kress dari gambar di atas adalah sebagai berikut !</strong>
+                                                </p>
+                                                <p>1. Jari telunjuk di senar ke 6 dan 2 serta 1 di fret 6</p>
+                                                <p>2. Jari tengah di senar 3 di fret ke 7</p>
+                                                <p>3. Jari manis di senar 4 dan 5 serta di fret 8</p>
+                                            </div>
+                                            <span class="uib_shim"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel widget uib_w_90 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-1" data-parent="#bs-accordion-0">Chord A# Kress Minor</a>
+       </h4>
+                            </div>
+                            <div id="bs-accordion-group-1" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col uib_col_20 single-col" data-uib="layout/col" data-ver="0">
+                                        <div class="rotqte">
+                                            <img src="images/AKresMinor.jpg" height="100%" width="100%">
+                                        </div>
+                                        <div class="widget-container content-area vertical-col">
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan A Kress Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk di senar 6 serta ditekan di senar 1,2, dan 3 di fret 6</p>
+                                        <p>2. Jari tengah di senar 4 dan 5 fret 8</p>
+
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel-group no_wrap widget uib_w_92 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-1">
+
+                    <div class="panel widget uib_w_94 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-4" data-parent="#bs-accordion-1">Chord C# Kress</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-4" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_23 single-col" data-uib="layout/col" data-ver="0">
+                                    <img src="images/CKres.jpg" height="100%" width="100%">
+                                    <div class="widget-container content-area vertical-col">
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan C Kress dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk di senar ke 6 dan 2 serta 1 di freet 9</p>
+                                        <p>2. Jari tengah di senar ke 3 dan fret 10</p>
+                                        <p>3. Jari manis di senar 4 dan 5 fret 11</p>
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel widget uib_w_95 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-5" data-parent="#bs-accordion-1">Chord C# Kress Minor</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-5" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_24 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <img src="images/CKresMinor.jpg" height="100%" width="100%">
+
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan C Kress Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk di senar no 1, 2, 3, dan 6 yang berada di fret 9</p>
+                                        <p>2. Sedangkan jari manis berada di senar 4 dan 5 di fret 11</p>
+
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-group no_wrap widget uib_w_96 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-2">
+                    <div class="panel widget uib_w_97 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-6" data-parent="#bs-accordion-2">Chord D# Kress</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-6" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_25 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <img src="images/DKres.jpg" height="100%" width="100%">
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan D Kress dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk di senar ke 1 dan 5 fret 6</p>
+                                        <p>2. Jari manis berada di senar 2, 3, dan 4 yang terletak di fret 8</p>
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel widget uib_w_98 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-7" data-parent="#bs-accordion-2">Chord D# Kress Minor</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-7" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_26 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <img src="images/DKresMinor.jpg" height="100%" width="100%">
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan D Kress Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk di senar 1 dan 5 yang berada di fret ke 6</p>
+                                        <p>2. Jari tengah di senar ke 2 yang terletak di fret 7</p>
+                                        <p>3. Jari manis letakkan di senar 3 dan 4 di fret ke 8</p>
+
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel-group no_wrap widget uib_w_100 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-3">
+
+                    <div class="panel widget uib_w_102 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-10" data-parent="#bs-accordion-3">Chord F# Kress</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-10" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_29 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <img src="images/FKres.jpg" height="100%" width="100%">
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan F Kress dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk menekan senar no 1, 2, dan 6 yang terletak di fret ke 2 dari atas</p>
+                                        <p>2. Jari tengah di senar no 3 dan di fret ke 3</p>
+                                        <p>3. Jari manis letakkan di senar no 4 dan 5 fret ke 4</p>
+
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel widget uib_w_103 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-11" data-parent="#bs-accordion-3">Chord F# Kress Minor</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-11" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_30 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <img src="images/FKressMinor.jpg" height="100%" width="100%">
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan F Kress Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Letakkan jari telunjuk di senar no 2, 3, dan 6 fret ke 2 pada gitar</p>
+                                        <p>2. Jari manis menakan senar no 4 dan 5 fret 4</p>
+                                        <p>3. Sedangkan jari kelingking menekan senar no 1 fret ke 5</p>
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-group no_wrap widget uib_w_104 d-margins" data-uib="twitter%20bootstrap/accordion" data-ver="1" id="bs-accordion-6">
+                    <div class="panel widget uib_w_105 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-12" data-parent="#bs-accordion-6">Chord G# Kress</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-12" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_31 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        <img src="images/GKres.jpg" height="100%" width="100%">
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan G Kress dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk menekan senar 1, 2 dan 6 yang berada di fret ke 4</p>
+                                        <p>2. Letakkan jari tengah di senar no 3 fret ke 5</p>
+                                        <p>3. Letakkan jari manis di senar no 4 dan 5 di fret 6</p>
+
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel widget uib_w_106 panel-default" data-uib="twitter%20bootstrap/collapsible" data-ver="1">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+           <a class="accordion-toggle" data-toggle="collapse" href="#bs-accordion-group-20" data-parent="#bs-accordion-6">Chord G# Kress Minor</a>
+       </h4>
+                        </div>
+                        <div id="bs-accordion-group-20" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col uib_col_32 single-col" data-uib="layout/col" data-ver="0">
+                                    <div class="widget-container content-area vertical-col">
+                                        &nbsp; &nbsp; &nbsp;
+                                        <img src="images/GKresMinor.jpg" height="100%" width="100%">
+                                        <br>
+                                        <br>
+                                        <p><strong>Cara memainkan G Kress Minor dari gambar di atas adalah sebagai berikut !</strong>
+                                        </p>
+                                        <p>1. Jari telunjuk menekan senar no 1, 2, 3 dan 6 yang terletak di fret ke 4</p>
+                                        <p>2. Dan jari manis menekan senar no 4 dan 5 yang berada di fret ke 6</p>
+
+                                        <span class="uib_shim"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="upage vertical-col left hidden" id="video_f_major"></div>
+        <div class="upage vertical-col left hidden" id="video_e_major"></div>
+        <div class="upage vertical-col left hidden" id="video_d_major"></div>
+        <div class="upage vertical-col left hidden" id="video_c_major"></div>
+        <div class="upage vertical-col left hidden" id="video_b_major"></div>
+    </body>
+
+</html>
